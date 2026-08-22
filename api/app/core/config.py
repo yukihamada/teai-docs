@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, Dict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "TeAI.io API"
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: Optional[str] = None
     
     # 料金プラン（月額）
-    PRICING_PLANS = {
+    PRICING_PLANS: Dict[str, dict] = {
         "free": {
             "price": 0,
             "token_limit": 1000,  # 1日あたり
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     }
     
     # コスト設定
-    AI_COSTS = {
+    AI_COSTS: Dict[str, float] = {
         "gpt-4": 0.03,  # ドル/1K tokens
         "gpt-3.5-turbo": 0.002,
         "claude-2": 0.008,

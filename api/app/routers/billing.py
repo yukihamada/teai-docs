@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.services.billing_service import BillingService
 from app.core.deps import get_current_user, get_db
@@ -7,6 +7,8 @@ from app.schemas.billing import (
     SubscriptionResponse,
     UsageCosts
 )
+from app.models.user import User
+from app.core.config import settings
 import stripe
 
 router = APIRouter()
@@ -21,16 +23,16 @@ async def create_subscription(
     billing_service = BillingService(db)
     
     try:
-        subscription = await billing_service.create_subscription(
+        stripe_subscription = await billing_service.create_subscription(
             user=current_user,
             plan_id=subscription.plan_id,
-            payment_method_id=subscription.payment_method_id
+            payment_method_id=subscription.payment_method_id or ""
         )
         
         return SubscriptionResponse(
-            subscription_id=subscription.id,
-            status=subscription.status,
-            current_period_end=subscription.current_period_end
+            subscription_id=stripe_subscription.id,
+            status=stripe_subscription.status,
+            current_period_end=stripe_subscription.current_period_end
         )
         
     except stripe.error.StripeError as e:
