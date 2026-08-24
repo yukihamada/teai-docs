@@ -1,0 +1,35 @@
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+credentials
+credentials.*
+secrets/
+secrets.*
+
+# AWS CLI dist (do not commit install artifacts)
+aws/dist/
+awscliv2.zip
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+test.db
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build / dist
+dist/
+build/
+*.log

@@ -1,6 +1,6 @@
 import stripe
 from app.core.config import settings
-from app.models.user import User, UsageRecord
+from app.models.user import User, UsageRecord, FaxUsageRecord
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Dict, Any
@@ -135,3 +135,52 @@ class BillingService:
         """月間収益の計算"""
         plan = settings.PRICING_PLANS[user.subscription_plan]
         return plan["price"]  # 基本料金のみ（追加料金は未実装）
+
+    async def calculate_fax_costs(self, user: User, days: int = 30) -> Dict[str, Any]:
+        """FAX使用量のコスト計算（teaiクレジット経由のみ）"""
+        start_date = datetime.utcnow() - timedelta(days=days)
+        
+        fax_records = [
+            record for record in user.fax_usage_records
+            if record.timestamp > start_date
+        ]
+        
+        total_faxes = len(fax_records)
+        total_credits = sum(record.cost_credits for record in fax_records)
+        
+        return {
+            "fax_count": total_faxes,
+            "total_credits": total_credits,
+            "records": [
+                {
+                    "fax_id": r.fax_id,
+                    "provider": r.provider,
+                    "to_number": r.to_number,
+                    "pages": r.pages,
+                    "cost_credits": r.cost_credits,
+                    "status": r.status,
+                    "timestamp": r.timestamp.isoformat(),
+                }
+                for r in fax_records
+            ]
+        }
+
+    async def check_fax_profitability(self, user: User) -> Dict[str, Any]:
+        """FAX収益性チェック"""
+        fax_costs = await self.calculate_fax_costs(user)
+        revenue = self.get_monthly_revenue(user)
+        
+        # FAXコストをドル換算（1クレジット = $0.01想定）
+        fax_cost_usd = fax_costs["total_credits"] * 0.01
+        
+        margin = revenue - fax_cost_usd
+        margin_percentage = (margin / revenue * 100) if revenue > 0 else 0
+        
+        return {
+            "fax_costs": fax_costs,
+            "fax_cost_usd": fax_cost_usd,
+            "revenue": revenue,
+            "margin": margin,
+            "margin_percentage": margin_percentage,
+            "is_profitable": margin_percentage >= 20,
+        }

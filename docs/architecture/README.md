@@ -94,6 +94,8 @@ graph TD
 
 ## 料金プラン構成
 
+> **注意: 以下は旧価格(アーカイブ)。現行価格は Starter ¥1,480 / Pro ¥4,350 / Business ¥14,800/月 (USD: Starter $29 / Pro $99)。現行課金実体は nanobot (Rust): `nanobot/crates/teai-core/src/service/stripe.rs`**
+
 ### 基本プラン
 1. Free Tier (開発者向け)
    - ¥0/月

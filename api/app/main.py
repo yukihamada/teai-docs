@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routers import ai, billing
-from app.db.session import engine
+from app.routers import ai, billing, fax
 from app.db.base import Base
+from app.db.session import engine
 
 # データベースの初期化
 Base.metadata.create_all(bind=engine)
@@ -26,6 +26,7 @@ app.add_middleware(
 # ルーターの登録
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}/ai", tags=["ai"])
 app.include_router(billing.router, prefix=f"{settings.API_V1_STR}/billing", tags=["billing"])
+app.include_router(fax.router, prefix=f"{settings.API_V1_STR}/fax", tags=["fax"])
 
 @app.get("/")
 def read_root():
