@@ -10,7 +10,7 @@ secrets/
 secrets.*
 
 # AWS CLI dist (do not commit install artifacts)
-aws/dist/
+aws/
 awscliv2.zip
 
 # Python
