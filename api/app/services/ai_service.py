@@ -24,7 +24,7 @@ class AIService:
         
     async def check_usage_limits(self, user: User) -> bool:
         """ユーザーの使用制限をチェック"""
-        plan = settings.PRICING_PLANS[user.subscription_plan]
+        plan = settings.PRICING_PLANS.get(user.subscription_plan, settings.PRICING_PLANS["free"])
         
         # 日次/月次の使用量を計算
         now = datetime.utcnow()
@@ -136,6 +136,52 @@ class AIService:
             return {"ensemble_result": "No successful response from ensemble.", "details": responses}
         else:
             return {"ensemble_result": "No models in ensemble.", "details": []}
+
+    async def process_ai_request(
+        self,
+        user: User,
+        messages: list,
+        model: str = "gpt-3.5-turbo",
+    ):
+        """AIリクエストのメイン処理
+
+        - 使用制限チェック
+        - モデル選択（ユーザー指定または最適化）
+        - LiteLLM経由でLLM呼び出し
+        - 使用量をDBに記録
+        """
+        # 使用制限チェック
+        if not await self.check_usage_limits(user):
+            raise ValueError("Usage limit exceeded for your plan")
+
+        # メッセージをdictのリストに変換（Messageモデル対応）
+        msg_dicts = [
+            {"role": m.role, "content": m.content} if hasattr(m, "role") else m
+            for m in messages
+        ]
+
+        # 最適モデルを選択（レジストリにないモデルはフォールバック）
+        selected_model = self.select_optimal_model(msg_dicts, model)
+
+        # LLM呼び出し
+        from litellm import acompletion
+        response = await acompletion(model=selected_model, messages=msg_dicts)
+
+        # 使用量記録
+        usage = response.usage if hasattr(response, "usage") else {}
+        tokens_used = getattr(usage, "total_tokens", 0) if usage else 0
+        cost = self.get_model_cost(selected_model) * tokens_used / 1000
+
+        record = UsageRecord(
+            user_id=user.id,
+            model=selected_model,
+            tokens_used=tokens_used,
+            cost=cost,
+        )
+        self.db.add(record)
+        self.db.commit()
+
+        return response
 
     # Further down, `process_ai_request` could be modified to call `ensemble_models`
     # based on certain conditions (e.g., if a specific 'ensemble_model' is requested).

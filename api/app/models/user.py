@@ -12,6 +12,7 @@ class User(Base):
     full_name = Column(String)
     stripe_customer_id = Column(String, unique=True, index=True)
     subscription_plan = Column(String, default="free")
+    subscription_status = Column(String, default="incomplete")  # active, past_due, canceled, incomplete
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     

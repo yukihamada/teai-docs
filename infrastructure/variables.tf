@@ -121,3 +121,4 @@ variable "additional_tags" {
   description = "Additional tags"
   type        = map(string)
   default     = {}
+}

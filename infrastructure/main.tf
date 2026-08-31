@@ -44,8 +44,9 @@ module "security" {
   source = "./modules/security"
 
   environment   = var.environment
-  project_name = var.project_name
-  vpc_id       = module.vpc.vpc_id
+  project_name  = var.project_name
+  vpc_id        = module.vpc.vpc_id
+  app_port      = var.app_port
 }
 
 # ALBモジュール

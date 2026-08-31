@@ -133,7 +133,7 @@ class BillingService:
         
     def get_monthly_revenue(self, user: User) -> float:
         """月間収益の計算"""
-        plan = settings.PRICING_PLANS[user.subscription_plan]
+        plan = settings.PRICING_PLANS.get(user.subscription_plan, settings.PRICING_PLANS["free"])
         return plan["price"]  # 基本料金のみ（追加料金は未実装）
 
     async def calculate_fax_costs(self, user: User, days: int = 30) -> Dict[str, Any]:
