@@ -2,11 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.routers import ai, billing, fax
-from app.db.base import Base
-from app.db.session import engine
 
-# データベースの初期化
-Base.metadata.create_all(bind=engine)
+# NOTE: DB初期化はAlembicマイグレーションで管理すること。
+#       本番環境で create_all を実行してはいけない。
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -14,13 +12,13 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# CORSミドルウェアの設定
+# CORSミドルウェアの設定（環境変数で許可オリジンを指定）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # ルーターの登録

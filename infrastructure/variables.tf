@@ -34,25 +34,37 @@ variable "availability_zones" {
 }
 
 # データベース設定
-variable "database_name" {
+variable "db_name" {
   description = "Database name"
   type        = string
   default     = "teai"
 }
 
-variable "database_username" {
+variable "db_username" {
   description = "Database username"
   type        = string
   default     = "teai_admin"
 }
 
-variable "database_password" {
+variable "db_password" {
   description = "Database password"
   type        = string
   sensitive   = true
 }
 
 # ECS設定
+variable "task_cpu" {
+  description = "Task CPU units"
+  type        = number
+  default     = 256
+}
+
+variable "task_memory" {
+  description = "Task memory (MiB)"
+  type        = number
+  default     = 512
+}
+
 variable "container_insights" {
   description = "Enable container insights"
   type        = bool

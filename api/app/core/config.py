@@ -8,20 +8,23 @@ class Settings(BaseSettings):
     VERSION: str = "0.1.0"
     API_V1_STR: str = "/api/v1"
     
-    # セキュリティ
-    SECRET_KEY: str = "your-secret-key-here"
+    # セキュリティ（必須: 環境変数で設定）
+    SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    
-    # Stripe設定
-    STRIPE_SECRET_KEY: str = "your-stripe-secret-key"
-    STRIPE_WEBHOOK_SECRET: str = "your-stripe-webhook-secret"
-    
-    # データベース
-    DATABASE_URL: str = "sqlite:///./test.db"
-    
-    # LiteLLM設定
-    OPENAI_API_KEY: str = "your-openai-api-key"
+
+    # Stripe設定（必須: 環境変数で設定）
+    STRIPE_SECRET_KEY: str
+    STRIPE_WEBHOOK_SECRET: str
+
+    # データベース（必須: 環境変数で設定）
+    DATABASE_URL: str
+
+    # LiteLLM設定（必須: 環境変数で設定）
+    OPENAI_API_KEY: str
     ANTHROPIC_API_KEY: Optional[str] = None
+
+    # CORS許可オリジン（カンマ区切りで環境変数から、デフォルトはteai.io）
+    ALLOWED_ORIGINS: str = "https://www.teai.io,https://dashboard.teai.io"
     
     # FAX設定（システム共通・teaiクレジット経由用）
     TELNYX_API_KEY: Optional[str] = None
@@ -76,5 +79,10 @@ class Settings(BaseSettings):
     
     # FAXコスト（teaiクレジット）
     FAX_COST_CREDITS: int = 1  # 1通あたり1クレジット
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        """ALLOWED_ORIGINS をリストに変換"""
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
 
 settings = Settings()

@@ -30,11 +30,7 @@ module "main" {
   # アプリケーション設定
   app_image = "docker.all-hands.dev/all-hands-ai/openhands:latest"
   app_port  = 3000
-
-  # ECS設定
-  task_cpu    = 256
-  task_memory = 512
-  app_count   = 1
+  app_count = 1
 
   # タグ設定
   additional_tags = {

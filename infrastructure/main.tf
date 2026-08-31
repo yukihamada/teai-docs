@@ -68,7 +68,12 @@ module "ecs" {
   vpc_id        = module.vpc.vpc_id
   subnet_ids    = module.vpc.private_subnet_ids
   sg_ids        = [module.security.ecs_sg_id]
-  alb_target_group_arn = module.alb.target_group_arn
+  target_group_arn = module.alb.target_group_arn
+  app_image     = var.app_image
+  app_port      = var.app_port
+  desired_count = var.app_count
+  task_cpu      = var.task_cpu
+  task_memory   = var.task_memory
 }
 
 # RDSモジュール
@@ -76,10 +81,13 @@ module "rds" {
   source = "./modules/rds"
 
   environment   = var.environment
-  project_name = var.project_name
-  vpc_id       = module.vpc.vpc_id
-  subnet_ids   = module.vpc.database_subnet_ids
-  sg_ids       = [module.security.rds_sg_id]
+  project_name  = var.project_name
+  vpc_id        = module.vpc.vpc_id
+  subnet_ids    = module.vpc.database_subnet_ids
+  sg_ids        = [module.security.rds_sg_id]
+  db_name       = var.db_name
+  db_username   = var.db_username
+  db_password   = var.db_password
 }
 
 # Route 53モジュール
