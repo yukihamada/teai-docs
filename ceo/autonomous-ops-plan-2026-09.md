@@ -68,3 +68,4 @@ teai.io(AIエージェントプラットフォーム)を自律的に運営・改
 1. ~~Google Cloud Console redirect URI登録~~ → **解消(2026-09-02)**: PR#558でコード側回避(redirect_uriを登録済みchatweb.aiに固定+state運び)。Console操作不要になった。
 
 | 2026-09-02 | **PR#558 マージ+デプロイ確認**(Google redirect_uri_mismatch修復) | 本人から実測報告「エラー400」。原因: teai.io callbackがGCP未登録+Console登録はAPI非対応。8/19の未マージ修復(3d5e05d)と同手法(chatweb.ai固定+state運び)でコード側解決。本番でGoogleが通常のログイン画面(200)を返すことを確認済み | `git revert` squash commit→push |
+| 2026-09-02 | **PR#562 マージ+デプロイ確認**(chatweb.ai滞留の修復) | #558の副作用: callback処理hostがchatweb.aiになるのに最終着地が相対パス `/register#...` だったため、teai.ioからログインしたユーザーがchatweb.aiに取り残された(本人実測報告)。libsqlパスの着地を絶対URL `https://teai.io/register#token=...` に修正 | `git revert` squash commit→push |
