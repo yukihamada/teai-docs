@@ -65,4 +65,6 @@ teai.io(AIエージェントプラットフォーム)を自律的に運営・改
 | 2026-09-01 | **PR#509 マージ+デプロイ確認**(課金経路argmin化+逆ざやガード) | CI green・テスト136本pass・margin-report実測で検出した3種の逆ざや(-882%/-135%/-157%)を根���。deploy success・health 200 | revert squash commit→push |
 
 ## 人間ゲート(要対応)
-1. **Google Cloud Console**: redirect URI `https://teai.io/auth/google/callback` の登録(未登録だとGoogleボタンがredirect_uri_mismatchで止まる)。PR#549本文記載。
+1. ~~Google Cloud Console redirect URI登録~~ → **解消(2026-09-02)**: PR#558でコード側回避(redirect_uriを登録済みchatweb.aiに固定+state運び)。Console操作不要になった。
+
+| 2026-09-02 | **PR#558 マージ+デプロイ確認**(Google redirect_uri_mismatch修復) | 本人から実測報告「エラー400」。原因: teai.io callbackがGCP未登録+Console登録はAPI非対応。8/19の未マージ修復(3d5e05d)と同手法(chatweb.ai固定+state運び)でコード側解決。本番でGoogleが通常のログイン画面(200)を返すことを確認済み | `git revert` squash commit→push |
