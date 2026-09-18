@@ -1,9 +1,11 @@
 # teai MCP tool starter
 
-コピーして5分で出品できる雛形。詳細ガイド: `../teai-mcp-dev-guide.md`
+コピーして5分で出品できる雛形。詳細ガイド: https://teai.io/blog/mcp-dev-guide (EN: https://teai.io/blog/mcp-dev-guide-en) / 登録ページ: https://teai.io/mcp-developers
+
+最初の数人には実装から出品まで直接伴走します。詰まったら焚き火( https://takibi.wtf )か team@teai.io へ。
 
 ```bash
-cp -r teai-mcp-starter my-tool && cd my-tool
+git clone --depth 1 https://github.com/yukihamada/teai-docs && cp -r teai-docs/mcp-starter my-tool && cd my-tool
 # 1. wrangler.toml の name と src/index.js の TOOLS/handleToolCall を書き換える
 # 2. ローカル確認(グローバルwrangler推奨・npxはハングすることがある)
 wrangler dev   # 別ターミナルで: curl localhost:8787 -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
